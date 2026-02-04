@@ -1,0 +1,1384 @@
+<!-- :contentReference[oaicite:0]{index=0} -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Школьная столовая — Портал</title>
+
+<style>
+:root{
+  --blue:#1976d2;
+  --blue2:#0f5fb2;
+  --cream:#fff6e6;
+  --tray:#ffe2b6;
+  --ketchup:#ff4d4d;
+  --mustard:#ffcc33;
+  --mint:#22c55e;
+  --ink:#1f2937;
+  --card:#ffffffcc;
+  --shadow: 0 18px 45px rgba(17,24,39,.18);
+  --radius:18px;
+}
+
+/* ===== Base ===== */
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  font-family: "Arial", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  color:var(--ink);
+  overflow-x:hidden;
+
+  /* Новый фон: “столовая” (скатерть/плитка + тёплый свет) */
+  background:
+    radial-gradient(1200px 800px at 18% 8%, rgba(255,255,255,.95) 0%, rgba(255,246,230,.92) 42%, rgba(244,241,234,.92) 100%),
+    radial-gradient(900px 620px at 82% 20%, rgba(255,230,200,.55) 0%, rgba(255,230,200,0) 60%),
+    radial-gradient(900px 620px at 20% 90%, rgba(255,210,170,.45) 0%, rgba(255,210,170,0) 58%),
+    linear-gradient(180deg, rgba(255,255,255,.35), rgba(255,255,255,0) 45%),
+    /* лёгкая “плитка” как в столовой */
+    linear-gradient(90deg, rgba(25,118,210,.06) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255,204,51,.06) 1px, transparent 1px);
+  background-size:
+    auto,
+    auto,
+    auto,
+    auto,
+    56px 56px,
+    56px 56px;
+  background-position:
+    center,
+    center,
+    center,
+    top,
+    0 0,
+    0 0;
+  background-color: #fff6e6;
+}
+
+/* ===== Background decor: реалистичные пирожки + пар ===== */
+.bg-decor{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  overflow:hidden;
+}
+
+/* Пирожок “косичкой” (приближённо реалистичный через градиенты/тени) */
+.pie{
+  position:absolute;
+  width: 220px;
+  height: 140px;
+  border-radius: 999px;
+  opacity: .22;
+  transform: rotate(10deg);
+  filter: blur(.15px);
+  box-shadow:
+    0 24px 50px rgba(17,24,39,.10),
+    inset 0 10px 14px rgba(255,255,255,.35),
+    inset 0 -16px 24px rgba(130,70,18,.28);
+  background:
+    /* блики */
+    radial-gradient(90px 70px at 30% 28%, rgba(255,255,255,.70) 0%, rgba(255,255,255,0) 58%),
+    radial-gradient(140px 110px at 65% 40%, rgba(255,245,220,.55) 0%, rgba(255,245,220,0) 62%),
+    /* “запечённость” */
+    radial-gradient(240px 160px at 50% 60%, rgba(244,191,120,.95) 0%, rgba(212,138,58,.92) 55%, rgba(150,78,18,.88) 100%),
+    /* мелкая фактура теста */
+    repeating-linear-gradient(25deg, rgba(255,255,255,.0) 0 7px, rgba(255,255,255,.06) 7px 9px);
+}
+
+/* Тёмный контур снизу (подпёк) */
+.pie::after{
+  content:"";
+  position:absolute;
+  inset: 14px 18px 10px 18px;
+  border-radius: 999px;
+  background:
+    radial-gradient(180px 120px at 50% 78%, rgba(90,40,5,.22) 0%, rgba(90,40,5,0) 62%),
+    radial-gradient(240px 160px at 50% 85%, rgba(120,60,12,.20) 0%, rgba(120,60,12,0) 70%);
+  mix-blend-mode: multiply;
+  opacity: .9;
+}
+
+/* “Косичка” сверху: ряд переплетённых “петель” */
+.pie::before{
+  content:"";
+  position:absolute;
+  left: 22px;
+  right: 22px;
+  top: 26px;
+  height: 34px;
+  border-radius: 999px;
+  opacity: .95;
+  background:
+    /* тень под косичкой */
+    radial-gradient(220px 50px at 50% 85%, rgba(65,28,0,.28) 0%, rgba(65,28,0,0) 70%),
+    /* “петельки” */
+    repeating-radial-gradient(circle at 10px 50%,
+      rgba(255,232,195,.95) 0 9px,
+      rgba(214,145,68,.92) 9px 14px,
+      rgba(255,232,195,.0) 14px 24px),
+    /* общий тон */
+    linear-gradient(180deg, rgba(255,236,206,.92), rgba(198,120,46,.90));
+  box-shadow:
+    inset 0 8px 12px rgba(255,255,255,.26),
+    inset 0 -10px 16px rgba(120,60,12,.22);
+  filter: saturate(1.05) contrast(1.02);
+}
+
+/* Пар от пирожков */
+.pie .steam{
+  position:absolute;
+  left: 50%;
+  top: -8px;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 35% 35%, rgba(255,255,255,.92), rgba(255,255,255,0) 65%);
+  opacity: 0;
+  transform: translateX(-50%) translateY(0) scale(.95);
+  filter: blur(.2px);
+  animation: steamRise linear infinite;
+}
+
+.pie .steam.s1{ margin-left:-34px; animation-duration: 4.8s; animation-delay: -1.8s; }
+.pie .steam.s2{ margin-left:-10px; animation-duration: 5.6s; animation-delay: -3.2s; }
+.pie .steam.s3{ margin-left: 14px; animation-duration: 4.3s; animation-delay: -2.4s; }
+.pie .steam.s4{ margin-left: 38px; animation-duration: 6.1s; animation-delay: -4.6s; }
+
+@keyframes steamRise{
+  0%   { opacity: 0;   transform: translateX(-50%) translateY(14px) scale(.85); }
+  12%  { opacity: .62; }
+  55%  { opacity: .35; }
+  100% { opacity: 0;   transform: translateX(calc(-50% + 18px)) translateY(-140px) scale(1.55); }
+}
+
+/* ===== Header ===== */
+header{
+  position:sticky;
+  top:0;
+  z-index:10;
+  background: linear-gradient(90deg, var(--blue) 0%, var(--blue2) 60%, #0b4b8f 100%);
+  color:#fff;
+  padding: 14px 16px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.18);
+}
+header h2{
+  margin:0;
+  font-size: 18px;
+  letter-spacing:.4px;
+}
+header button{
+  width:auto;
+  margin:0;
+  padding:10px 12px;
+  border:none;
+  border-radius: 14px;
+  background: rgba(255,255,255,.16);
+  color:#fff;
+  cursor:pointer;
+  transition: transform .12s ease, background .2s ease;
+}
+header button:hover{ background: rgba(255,255,255,.22); transform: translateY(-1px); }
+header button:active{ transform: translateY(0) scale(.98); }
+
+/* ===== Layout ===== */
+.screen{
+  display:none;
+  padding: 22px 14px 34px;
+  position:relative;
+  z-index:1; /* над декором */
+}
+.screen.active{ display:block; }
+
+.card{
+  background: var(--card);
+  backdrop-filter: blur(10px);
+  padding: 20px;
+  border-radius: var(--radius);
+  max-width: 520px;
+  margin: 0 auto;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(255,255,255,.55);
+  position:relative;
+  overflow:hidden;
+}
+.card:before{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  background: radial-gradient(240px 140px at 20% 0%, rgba(255,204,51,.25), transparent 60%),
+              radial-gradient(240px 140px at 80% 100%, rgba(25,118,210,.22), transparent 60%);
+  pointer-events:none;
+}
+
+/* ===== Inputs ===== */
+input, select, textarea{
+  width:100%;
+  padding: 10px 12px;
+  margin-top: 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(31,41,55,.18);
+  background: rgba(255,255,255,.86);
+  outline:none;
+  transition: transform .12s ease, box-shadow .2s ease, border-color .2s ease;
+}
+input:focus, select:focus, textarea:focus{
+  border-color: rgba(25,118,210,.45);
+  box-shadow: 0 0 0 4px rgba(25,118,210,.15);
+  transform: translateY(-1px);
+}
+textarea{ resize: vertical; }
+
+/* ===== Buttons ===== */
+button{
+  width:100%;
+  padding: 12px 14px;
+  margin-top: 12px;
+  border:none;
+  border-radius: 16px;
+  cursor:pointer;
+  font-weight: 700;
+  letter-spacing: .2px;
+  color:#0b1b2b;
+
+  background: linear-gradient(180deg, #fff 0%, #f6f7fb 100%);
+  box-shadow: 0 10px 22px rgba(17,24,39,.14);
+  transform: translateY(0);
+  transition: transform .12s ease, box-shadow .2s ease, filter .2s ease;
+  position:relative;
+  overflow:hidden;
+}
+button:hover{
+  transform: translateY(-2px);
+  filter: brightness(1.02);
+  box-shadow: 0 14px 28px rgba(17,24,39,.18);
+}
+button:active{
+  transform: translateY(0) scale(.99);
+  box-shadow: 0 8px 16px rgba(17,24,39,.14);
+}
+
+/* “соусные” акценты для кнопок (школьная столовая) */
+.card > button:nth-of-type(1){
+  background: linear-gradient(180deg, rgba(255,204,51,.95) 0%, rgba(255,178,0,.95) 100%);
+}
+.card > button:nth-of-type(2){
+  background: linear-gradient(180deg, rgba(255,99,99,.95) 0%, rgba(255,77,77,.95) 100%);
+  color:#1b0b0b;
+}
+.card > button:nth-of-type(3){
+  background: linear-gradient(180deg, rgba(34,197,94,.95) 0%, rgba(22,163,74,.95) 100%);
+  color:#05140b;
+}
+.card > button:nth-of-type(4){
+  background: linear-gradient(180deg, rgba(59,130,246,.95) 0%, rgba(25,118,210,.95) 100%);
+  color:#06101b;
+}
+
+/* Ripple */
+.ripple{
+  position:absolute;
+  border-radius:999px;
+  transform: translate(-50%,-50%) scale(0);
+  background: rgba(255,255,255,.55);
+  animation: ripple .55s ease-out;
+  pointer-events:none;
+}
+@keyframes ripple{
+  to{ transform: translate(-50%,-50%) scale(3.2); opacity:0; }
+}
+
+/* Messages */
+.error{ color:#b91c1c; margin-top:10px; font-weight:700; }
+.success{ color:#15803d; margin-top:10px; font-weight:700; }
+
+/* Lists / blocks */
+ul{ padding-left: 18px; }
+.row{ display:flex; gap: 10px; margin-top: 10px; }
+.row select{ width: 50%; }
+hr{
+  border:none;
+  height:1px;
+  background: rgba(31,41,55,.12);
+  margin: 16px 0;
+}
+
+/* Small cards inside lists */
+.card .card{
+  background: rgba(255,255,255,.88);
+  box-shadow: 0 10px 22px rgba(17,24,39,.10);
+}
+
+/* Motion safety */
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="bg-decor" aria-hidden="true">
+  <!-- Пирожки “косичкой” + пар (пар привязан к пирожкам) -->
+  <div class="pie" style="left:-40px; top:110px; transform: rotate(12deg); width:240px; height:150px;">
+    <div class="steam s1"></div><div class="steam s2"></div><div class="steam s3"></div><div class="steam s4"></div>
+  </div>
+
+  <div class="pie" style="right:-70px; top:330px; transform: rotate(-10deg); width:270px; height:165px; opacity:.20;">
+    <div class="steam s1"></div><div class="steam s2"></div><div class="steam s3"></div><div class="steam s4"></div>
+  </div>
+
+  <div class="pie" style="left:62%; top:72vh; transform: rotate(18deg); width:250px; height:155px; opacity:.18;">
+    <div class="steam s1"></div><div class="steam s2"></div><div class="steam s3"></div><div class="steam s4"></div>
+  </div>
+
+  <div class="pie" style="left:18%; top:78vh; transform: rotate(-6deg); width:210px; height:135px; opacity:.16;">
+    <div class="steam s1"></div><div class="steam s2"></div><div class="steam s3"></div><div class="steam s4"></div>
+  </div>
+</div>
+
+<header>
+    <button onclick="goBack()">⬅</button>
+    <h2>Школьная столовая</h2>
+</header>
+
+<!--  СТАРТ  -->
+
+<div class="screen active" id="start">
+    <div class="card">
+        <h3>Войти как</h3>
+        <button onclick="openLogin('student')">Ученик</button>
+        <button onclick="openLogin('cook')">Повар</button>
+        <button onclick="openLogin('admin')">Администратор</button>
+        <button onclick="openLogin('parent')">Родитель</button>
+        <hr>
+        <button onclick="show('registerRole')">Зарегистрироваться</button>
+    </div>
+</div>
+
+<!--  ВХОД  -->
+
+<div class="screen" id="login">
+    <div class="card">
+        <h3 id="loginTitle"></h3>
+        <input id="loginEmail" placeholder="Почта">
+        <input id="loginPassword" type="password" placeholder="Пароль">
+        <button onclick="login()">Войти</button>
+        <div class="error" id="loginError"></div>
+    </div>
+</div>
+
+<!--  ВЫБОР РОЛИ ПРИ РЕГИСТРАЦИИ  -->
+
+<div class="screen" id="registerRole">
+    <div class="card">
+        <h3>Зарегистрироваться как</h3>
+        <button onclick="chooseRole('student')">Ученик</button>
+        <button onclick="chooseRole('cook')">Повар</button>
+        <button onclick="chooseRole('admin')">Администратор</button>
+        <button onclick="chooseRole('parent')">Родитель</button>
+    </div>
+</div>
+
+<!--  РЕГИСТРАЦИЯ  -->
+
+<div class="screen" id="register">
+    <div class="card">
+        <h3 id="registerTitle"></h3>
+
+        <input id="regEmail" placeholder="Почта">
+        <input id="regPass1" type="password" placeholder="Пароль">
+        <input id="regPass2" type="password" placeholder="Повторите пароль">
+
+        <input id="surname" placeholder="Фамилия">
+        <input id="name" placeholder="Имя">
+        <input id="patronymic" placeholder="Отчество">
+        <input id="birthdate" type="date">
+
+        <div class="row" id="classRow">
+            <select id="classNumber"></select>
+            <select id="classLetter"></select>
+        </div>
+
+        <button onclick="registerUser()">Зарегистрироваться</button>
+        <div class="error" id="registerError"></div>
+        <div class="success" id="registerSuccess"></div>
+    </div>
+</div>
+
+<!--  КАБИНЕТ УЧЕНИКА  -->
+
+<div class="screen" id="student">
+    <div class="card">
+        <h3>Кабинет ученика</h3>
+        <button onclick="showMenu()">Просмотр меню</button>
+        <button onclick="openFood()">Оплата питания</button>
+        <button onclick="openNotes()">Заметки</button>
+    </div>
+</div>
+
+<!--  КАБИНЕТ РОДИТЕЛЯ  -->
+
+<div class="screen" id="parent">
+    <div class="card">
+        <h3>Кабинет родителя</h3>
+        <button onclick="openParentLink()">Привязать ребёнка</button>
+        <button onclick="openParentFood()">Оплата питания ребёнка</button>
+        <button onclick="openParentOrders()">Заказы ребёнка</button>
+        <button onclick="openParentReviews()">Отзывы ребёнка</button>
+        <button onclick="openParentNotes()">Заметки ребёнка</button>
+        <button onclick="showMenu()">Просмотр меню</button>
+    </div>
+</div>
+
+<div class="screen" id="parentLink">
+    <div class="card">
+        <h3>Привязать ребёнка</h3>
+        <input id="childEmail" placeholder="Почта ребёнка (ученика)">
+        <input id="childSurname" placeholder="Фамилия ребёнка">
+        <input id="childName" placeholder="Имя ребёнка">
+        <input id="childPatronymic" placeholder="Отчество ребёнка">
+        <input id="childBirthdate" type="date">
+        <div class="row">
+            <select id="childClassNumber"></select>
+            <select id="childClassLetter"></select>
+        </div>
+<button onclick="linkChildFull()">Привязать</button>
+        <div class="success" id="linkSuccess"></div>
+        <div class="error" id="linkError"></div>
+        <hr>
+        <h4>Мои дети</h4>
+        <div id="childrenList"></div>
+    </div>
+</div>
+
+<div class="screen" id="parentSelectChild">
+    <div class="card">
+        <h3>Выберите ребёнка</h3>
+        <div id="childrenPick"></div>
+        <div class="error" id="noChildrenError"></div>
+    </div>
+</div>
+
+<div class="screen" id="parentOrders">
+    <div class="card">
+        <h3>Заказы ребёнка</h3>
+        <div id="parentOrdersList"></div>
+    </div>
+</div>
+
+<div class="screen" id="parentReviews">
+    <div class="card">
+        <h3>Отзывы ребёнка</h3>
+        <div id="parentReviewsList"></div>
+    </div>
+</div>
+
+
+<!--  ЗАМЕТКИ  -->
+
+<div class="screen" id="notesScreen">
+    <div class="card">
+        <h3 id="notesTitle">Заметки</h3>
+        <textarea id="noteText" rows="4" placeholder="Введите заметку..."></textarea>
+        <button onclick="addNote()">Добавить заметку</button>
+        <div id="notesError" class="error"></div>
+        <hr/>
+        <div id="notesList"></div>
+    </div>
+</div>
+
+
+<!--  МЕНЮ ПО ДНЯМ  -->
+
+<div class="screen" id="menuScreen">
+    <div class="card">
+        <h3>Меню по дням</h3>
+        <select id="daySelect" onchange="loadDayMenu()">
+            <option disabled selected>Выберите день</option>
+            <option>Понедельник</option>
+            <option>Вторник</option>
+            <option>Среда</option>
+            <option>Четверг</option>
+            <option>Пятница</option>
+        </select>
+        <div id="menuContent"></div>
+    </div>
+</div>
+
+<!--  ОПЛАТА ПИТАНИЯ  -->
+
+<div class="screen" id="foodType">
+    <div class="card">
+        <h3>Выберите тип питания</h3>
+        <button onclick="chooseMeal('breakfast')">Завтрак</button>
+        <button onclick="chooseMeal('lunch')">Обед</button>
+    </div>
+</div>
+
+<div class="screen" id="foodChoose">
+    <div class="card">
+        <h3 id="mealTitle"></h3>
+        <div id="dishList"></div>
+    </div>
+</div>
+
+<div class="screen" id="foodPay">
+    <div class="card">
+        <h3>Оплатить?</h3>
+        <button onclick="confirmPay()">Оплатить</button>
+    </div>
+</div>
+
+<div class="screen" id="foodReceive">
+    <div class="card">
+        <h3>Получили блюдо?</h3>
+        <button onclick="finishReceive()">Подтвердить получение</button>
+    </div>
+</div>
+
+<div class="screen" id="foodReview">
+    <div class="card">
+        <h3>Оставьте отзыв</h3>
+        <textarea id="reviewText" placeholder="Ваш отзыв..."></textarea>
+        <button onclick="sendReview()">Отправить</button>
+        <button onclick="skipReview()">Пропустить</button>
+    </div>
+</div>
+
+<!--  КАБИНЕТ ПОВАРА  -->
+
+<div class="screen" id="cook">
+    <div class="card">
+        <h3>Кабинет повара</h3>
+        <button onclick="openCookMenu()">Меню</button>
+        <button onclick="openCookOrders()">Заказы на сегодня</button>
+        <button onclick="openCookReviews()">Отзывы</button>
+        <button onclick="openCookNotes()">Заметки</button>
+    </div>
+</div>
+
+<div class="screen" id="cookMenu">
+    <div class="card">
+        <h3>Редактирование меню</h3>
+
+        <select id="cookDay" onchange="loadCookMenu()">
+            <option disabled selected>Выберите день</option>
+            <option>Понедельник</option>
+            <option>Вторник</option>
+            <option>Среда</option>
+            <option>Четверг</option>
+            <option>Пятница</option>
+        </select>
+
+        <h4>Завтрак</h4>
+        <div id="cookBreakfast"></div>
+
+        <h4>Обед</h4>
+        <div id="cookLunch"></div>
+
+        <h3>Добавить блюдо</h3>
+        <input id="addDish" placeholder="Название">
+        <select id="addType">
+            <option value="breakfast">Завтрак</option>
+            <option value="lunch">Обед</option>
+        </select>
+        <button onclick="addCookDish()">Добавить</button>
+
+        <h3>Удалить блюдо</h3>
+        <input id="removeDish" placeholder="Название">
+        <select id="removeType">
+            <option value="breakfast">Завтрак</option>
+            <option value="lunch">Обед</option>
+        </select>
+        <button onclick="removeCookDish()">Удалить</button>
+    </div>
+</div>
+
+<div class="screen" id="cookOrders">
+    <div class="card">
+        <h3>Заказы на сегодня</h3>
+        <div id="ordersList"></div>
+    </div>
+</div>
+
+
+<div class="screen" id="cookNotes">
+    <div class="card">
+        <h3>Заметки по заказам на сегодня</h3>
+        <button onclick="loadCookNotesToday()">Обновить</button>
+        <div id="cookNotesList"></div>
+    </div>
+</div>
+
+
+<div class="screen" id="cookReviewsList">
+    <div class="card">
+        <h3>Отзывы</h3>
+        <ul id="reviewsOutput"></ul>
+    </div>
+</div>
+
+<!--  КАБИНЕТ АДМИНИСТРАТОРА  -->
+
+<div class="screen" id="admin">
+    <div class="card">
+        <h3>Кабинет администратора</h3>
+        <button onclick="openAdminUsers()">Пользователи</button>
+        <button onclick="openAdminMenu()">Меню столовой</button>
+        <button onclick="openAdminOrders()">Заказы</button>
+        <button onclick="openAdminReviews()">Отзывы</button>
+        <button onclick="openAdminSystem()">Системные функции</button>
+    </div>
+</div>
+
+<div class="screen" id="adminUsers">
+    <div class="card">
+        <h3>Пользователи</h3>
+        <input id="userSearch" placeholder="Поиск по фамилии" oninput="filterUsers()">
+        <div id="usersList"></div>
+    </div>
+</div>
+
+<div class="screen" id="adminMenu">
+    <div class="card">
+        <h3>Меню столовой</h3>
+        <button onclick="show('cookMenu')">Редактировать меню</button>
+    </div>
+</div>
+
+<div class="screen" id="adminOrders">
+    <div class="card">
+        <h3>Заказы</h3>
+        <button onclick="loadAdminOrders()">Обновить</button>
+        <div id="adminOrdersList"></div>
+    </div>
+</div>
+
+<div class="screen" id="adminReviews">
+    <div class="card">
+        <h3>Отзывы</h3>
+        <div id="adminReviewsList"></div>
+    </div>
+</div>
+
+<div class="screen" id="adminSystem">
+    <div class="card">
+        <h3>Системные функции</h3>
+        <button onclick="clearStats()">Очистить статистику</button>
+        <button onclick="alert('Пока недоступно')">Сброс меню</button>
+        <button onclick="alert('Пока недоступно')">Логи системы</button>
+    </div>
+</div>
+
+<!--  СКРИПТЫ  -->
+
+<script>
+let historyStack = ["start"];
+let currentRole = null;
+let currentUserId = null;
+let selectedChildId = null;
+let cachedChildren = [];
+let chosenMeal = null;
+let chosenDish = null;
+let allUsers = [];
+const baseUrl = "http://127.0.0.1:5000";
+
+function show(id){
+    document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+    if(historyStack[historyStack.length-1]!==id){ historyStack.push(id); }
+}
+
+function goBack(){
+    if(historyStack.length>1){
+        historyStack.pop();
+        let last = historyStack[historyStack.length-1];
+        show(last);
+    }
+}
+
+function openLogin(role){
+    currentRole = role;
+    const roleName = {student:'Ученик', cook:'Повар', admin:'Администратор', parent:'Родитель'}[role] || role;
+    loginTitle.innerText = "Вход: " + roleName;
+    loginError.innerText = "";
+    show("login");
+}
+
+function chooseRole(role){
+    currentRole = role;
+    const roleName = {student:'Ученик', cook:'Повар', admin:'Администратор', parent:'Родитель'}[role] || role;
+    registerTitle.innerText = "Регистрация: " + roleName;
+    classRow.style.display = role==="student" ? "flex" : "none";
+    show("register");
+}
+
+function strongPassword(p){
+    return p.length>=8 && /[A-Z]/.test(p) && /[a-z]/.test(p) && /[0-9]/.test(p) && /[^A-Za-z0-9]/.test(p);
+}
+
+function registerUser(){
+    registerError.innerText = "";
+    registerSuccess.innerText = "";
+
+    if(regPass1.value !== regPass2.value){
+        registerError.innerText = "Пароли не совпадают";
+        return;
+    }
+    if(!strongPassword(regPass1.value)){
+        registerError.innerText = "Пароль слишком слабый";
+        return;
+    }
+
+    fetch("http://127.0.0.1:5000/register",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+            email: regEmail.value,
+            password: regPass1.value,
+            role: currentRole,
+            surname: surname.value,
+            name: name.value,
+            patronymic: patronymic.value,
+            birthdate: birthdate.value,
+            class_number: classNumber.value || null,
+            class_letter: classLetter.value || null
+        })
+    })
+    .then(r=>r.json())
+    .then(data=>{
+        if(data.error){
+            registerError.innerText = data.error;
+        } else {
+            registerSuccess.innerText = "Вы успешно зарегистрировались!";
+            setTimeout(()=>{ historyStack=["start"]; show("start"); },3000);
+        }
+    });
+}
+
+function login(){
+    loginError.innerText = "";
+
+    fetch("http://127.0.0.1:5000/login",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+            email: loginEmail.value,
+            password: loginPassword.value,
+            role: currentRole
+        })
+    })
+    .then(r=>r.json())
+    .then(data=>{
+        if(data.error){
+            loginError.innerText="Неверный логин или пароль";
+        } else {
+            currentUserId = data.id;
+            show(currentRole);
+        }
+    });
+}
+
+function showMenu(){
+    show("menuScreen");
+}
+
+function loadDayMenu(){
+    let day = daySelect.value;
+    fetch("http://127.0.0.1:5000/menu/"+day)
+    .then(r=>r.json())
+    .then(data=>{
+        menuContent.innerHTML = `
+            <h4>Завтрак:</h4>
+            <ul>${data.breakfast.map(d=>`<li>${d}</li>`).join("")}</ul>
+            <h4>Обед:</h4>
+            <ul>${data.lunch.map(d=>`<li>${d}</li>`).join("")}</ul>
+        `;
+    });
+}
+
+function openFood(){
+    show("foodType");
+}
+
+function chooseMeal(meal){
+    chosenMeal = meal;
+    show("foodChoose");
+
+    let day = new Date().toLocaleString("ru",{weekday:"long"});
+    day = day[0].toUpperCase()+day.slice(1);
+
+    fetch("http://127.0.0.1:5000/menu/"+day)
+    .then(r=>r.json())
+    .then(data=>{
+        dishList.innerHTML = data[meal].map(d=>`<button onclick="selectDish('${d}')">${d}</button>`).join("");
+        mealTitle.innerText = "Выберите блюдо: " + (meal==="breakfast"?"Завтрак":"Обед");
+    });
+}
+
+function selectDish(dish){
+    chosenDish = dish;
+    show("foodPay");
+}
+
+function confirmPay(){
+    const studentId = (currentRole==='parent') ? selectedChildId : currentUserId;
+    fetch("http://127.0.0.1:5000/order",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+            user_id: currentUserId,
+            student_id: studentId,
+            dish: chosenDish,
+            meal: chosenMeal
+        })
+    });
+    show("foodReceive");
+}
+
+function finishReceive(){
+    show("foodReview");
+}
+
+function sendReview(){
+    const studentId = (currentRole==='parent') ? selectedChildId : currentUserId;
+
+    fetch("http://127.0.0.1:5000/review",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+            user_id: currentUserId,
+            student_id: studentId,
+            dish: chosenDish,
+            meal: chosenMeal,
+            review: reviewText.value
+        })
+    });
+
+    show(currentRole==='parent' ? "parent" : "student");
+}
+
+function skipReview(){
+    show(currentRole==='parent' ? "parent" : "student");
+}
+
+function openCookMenu(){
+    show("cookMenu");
+}
+
+function loadCookMenu(){
+    let day = cookDay.value;
+    fetch("http://127.0.0.1:5000/menu/"+day)
+    .then(r=>r.json())
+    .then(data=>{
+        cookBreakfast.innerHTML = data.breakfast.map(i=>"<div>"+i+"</div>").join("");
+        cookLunch.innerHTML = data.lunch.map(i=>"<div>"+i+"</div>").join("");
+    });
+}
+
+function addCookDish(){
+    fetch("http://127.0.0.1:5000/menu/add",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+            day: cookDay.value,
+            meal: addType.value,
+            dish: addDish.value
+        })
+    }).then(()=>loadCookMenu());
+}
+
+function removeCookDish(){
+    fetch("http://127.0.0.1:5000/menu/delete",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+            day: cookDay.value,
+            meal: removeType.value,
+            dish: removeDish.value
+        })
+    }).then(()=>loadCookMenu());
+}
+
+function openCookOrders(){
+    show("cookOrders");
+
+    fetch("http://127.0.0.1:5000/cook/orders_today")
+    .then(r=>r.json())
+    .then(data=>{
+        ordersList.innerHTML = data.map((o,i)=>`
+            <div style="border:1px solid #ccc;padding:10px;margin:5px">
+                ${o.meal}: ${o.dish}<br>
+                Статус: ${o.given?"выдано":"не выдано"}<br>
+                <button onclick="markGiven(${o.id})">Отметить как выдано</button>
+            </div>
+        `).join("");
+    });
+}
+
+function markGiven(id){
+    fetch("http://127.0.0.1:5000/cook/mark_given",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({id:id})
+    }).then(()=>openCookOrders());
+}
+
+function openCookReviews(){
+    show("cookReviewsList");
+
+    fetch("http://127.0.0.1:5000/cook/reviews")
+    .then(r=>r.json())
+    .then(data=>{
+        reviewsOutput.innerHTML = data.map(r=>`<li>${r.dish}: ${r.review}</li>`).join("");
+    });
+}
+
+
+function openCookNotes(){
+    loadCookNotesToday();
+    show("cookNotes");
+}
+
+async function loadCookNotesToday(){
+    const list = document.getElementById("cookNotesList");
+    list.innerHTML = "<p>Загрузка...</p>";
+
+    const res = await fetch(baseUrl + "/cook/notes_today");
+    const data = await res.json();
+
+    if(!Array.isArray(data) || data.length===0){
+        list.innerHTML = "<p>На сегодня заметок нет (или ещё нет заказов).</p>";
+        return;
+    }
+
+    // сгруппируем по ученику
+    const byStudent = {};
+    for(const n of data){
+        const key = (n.student_email || ("ID:"+n.student_id));
+        if(!byStudent[key]) byStudent[key] = {student_id:n.student_id, student_email:n.student_email, notes:[]};
+        byStudent[key].notes.push(n);
+    }
+
+    list.innerHTML = Object.values(byStudent).map(g => `
+        <div class="card" style="margin:10px 0;">
+            <h4>${escapeHtml(g.student_email || ("Ученик ID: " + g.student_id))}</h4>
+            <button onclick="openNotesForStudent(${g.student_id})">Открыть все заметки / добавить</button>
+            <div style="margin-top:8px;">
+                ${g.notes.map(n => `
+                    <div style="padding:6px; border:1px solid #ddd; border-radius:8px; margin:6px 0;">
+                        <div><b>${escapeHtml(n.created_at || "")}</b></div>
+                        <div>${escapeHtml(n.text)}</div>
+                        <small>Автор: ${escapeHtml(n.author_email || ("ID:"+n.author_id))}</small>
+                    </div>
+                `).join("")}
+            </div>
+        </div>
+    `).join("");
+}
+
+// открываем общий экран заметок (notesScreen) для выбранного ученика
+function openNotesForStudent(studentId){
+    notesStudentId = studentId;
+    notesTitle.innerText = "Заметки ученика (ID: " + notesStudentId + ")";
+    noteText.value = "";
+    notesError.innerText = "";
+    loadNotes();
+    show("notesScreen");
+}
+
+
+function openAdminUsers(){
+    show("adminUsers");
+
+    fetch("http://127.0.0.1:5000/admin/users")
+    .then(r=>r.json())
+    .then(data=>{
+        allUsers = data;
+        renderUsers(data);
+    });
+}
+
+function renderUsers(list){
+    usersList.innerHTML = list.map(u=>`
+        <div style="border:1px solid #ccc;padding:10px;margin:5px">
+            <b>${u.surname} ${u.name} ${u.patronymic}</b><br>
+            Email: ${u.email}<br>
+            Роль:
+            <select onchange="changeUserRole(${u.id},this.value)">
+                <option value="student" ${u.role=="student"?"selected":""}>Ученик</option>
+                <option value="cook" ${u.role=="cook"?"selected":""}>Повар</option>
+                <option value="admin" ${u.role=="admin"?"selected":""}>Администратор</option>
+                <option value="parent" ${u.role=="parent"?"selected":""}>Родитель</option>
+            </select>
+            <br>
+            <button onclick="deleteUser(${u.id})">Удалить</button>
+        </div>
+    `).join("");
+}
+
+function filterUsers(){
+    let q = userSearch.value.toLowerCase();
+    let filtered = allUsers.filter(u=>u.surname.toLowerCase().includes(q));
+    renderUsers(filtered);
+}
+
+function deleteUser(id){
+    fetch("http://127.0.0.1:5000/admin/users/delete",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({id:id})
+    }).then(()=>openAdminUsers());
+}
+
+function changeUserRole(id,role){
+    fetch("http://127.0.0.1:5000/admin/users/role",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({id:id,role:role})
+    });
+}
+
+function openAdminMenu(){
+    show("adminMenu");
+}
+
+function openAdminOrders(){
+    show("adminOrders");
+    loadAdminOrders();
+}
+
+function loadAdminOrders(){
+    fetch("http://127.0.0.1:5000/cook/orders_today")
+    .then(r=>r.json())
+    .then(data=>{
+        adminOrdersList.innerHTML = data.map(o=>`
+            <div style="border:1px solid #ccc;padding:10px;margin:5px">
+                ${o.meal}: ${o.dish} — ${o.given?"выдано":"не выдано"}
+            </div>
+        `).join("");
+    });
+}
+
+function openAdminReviews(){
+    show("adminReviews");
+
+    fetch("http://127.0.0.1:5000/cook/reviews")
+    .then(r=>r.json())
+    .then(data=>{
+        adminReviewsList.innerHTML = data.map(r=>`
+            <div style="border:1px solid #ccc;padding:10px;margin:5px">
+                <b>${r.dish}</b>: ${r.review}
+            </div>
+        `).join("");
+    });
+}
+
+function openAdminSystem(){
+    show("adminSystem");
+}
+
+function clearStats(){
+    fetch("http://127.0.0.1:5000/admin/clear",{
+        method:"POST"
+    }).then(()=>alert("Статистика очищена"));
+}
+
+
+// ===== РОДИТЕЛЬ =====
+
+function openParentLink(){
+    linkError.innerText = "";
+    linkSuccess.innerText = "";
+    show("parentLink");
+    loadChildren();
+}
+
+function loadChildren(){
+    if(!currentUserId){ return; }
+    fetch("http://127.0.0.1:5000/parent/children/"+currentUserId)
+    .then(r=>r.json())
+    .then(data=>{
+        cachedChildren = data || [];
+        childrenList.innerHTML = cachedChildren.length
+            ? cachedChildren.map(c=>`<div style="border:1px solid #ccc;padding:10px;margin:5px">
+                <b>${c.surname} ${c.name} ${c.patronymic||""}</b><br>
+                Класс: ${c.class_number || ""}${c.class_letter || ""}<br>
+                Email: ${c.email}
+            </div>`).join("")
+            : "<i>Пока нет привязанных детей</i>";
+    });
+}
+
+function linkChildFull(){
+    linkError.innerText = "";
+    linkSuccess.innerText = "";
+
+    const payload = {
+        parent_id: currentUserId,
+        email: (childEmail.value || "").trim(),
+        surname: (childSurname.value || "").trim(),
+        name: (childName.value || "").trim(),
+        patronymic: (childPatronymic.value || "").trim(),
+        birthdate: (childBirthdate.value || "").trim(),
+        class_number: Number(childClassNumber.value),
+        class_letter: (childClassLetter.value || "").trim()
+    };
+
+    fetch(baseUrl + "/parent/link_child_full",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify(payload)
+    })
+    .then(async r => {
+        const data = await r.json().catch(()=> ({}));
+        if(!r.ok){
+            throw new Error(data.error || "Ошибка привязки ребёнка");
+        }
+        return data;
+    })
+    .then(data=>{
+        if(data.message==="created" && data.temp_password){
+            linkSuccess.innerHTML =
+                "Ребёнок создан и привязан. Временный пароль для входа ученика: <b>" +
+                escapeHtml(data.temp_password) + "</b>";
+        } else {
+            linkSuccess.innerText = "Ребёнок успешно привязан!";
+        }
+        loadChildren();
+    })
+    .catch(err=>{
+        linkError.innerText = err.message || "Ошибка привязки ребёнка";
+    });
+}
+
+
+
+
+function openParentFood(){
+    // сначала выбираем ребёнка
+    show("parentSelectChild");
+    buildChildrenPicker(()=>{ show("foodType"); });
+}
+
+function openParentOrders(){
+    show("parentSelectChild");
+    buildChildrenPicker(()=>{ loadParentOrders(); });
+}
+
+function openParentReviews(){
+    show("parentSelectChild");
+    buildChildrenPicker(()=>{ loadParentReviews(); });
+}
+
+function buildChildrenPicker(onSelected){
+    noChildrenError.innerText = "";
+    fetch("http://127.0.0.1:5000/parent/children/"+currentUserId)
+    .then(r=>r.json())
+    .then(data=>{
+        cachedChildren = data || [];
+        if(!cachedChildren.length){
+            childrenPick.innerHTML = "";
+            noChildrenError.innerText = "Сначала привяжите ребёнка в разделе «Привязать ребёнка».";
+            return;
+        }
+        childrenPick.innerHTML = cachedChildren.map(c=>`
+            <button onclick="selectChild(${c.id}, '${c.surname} ${c.name}')">${c.surname} ${c.name}</button>
+        `).join("");
+        window._onChildSelected = onSelected;
+    });
+}
+
+function selectChild(id, label){
+    selectedChildId = id;
+    // переход в следующий экран
+    if(window._onChildSelected){ window._onChildSelected(); }
+}
+
+function loadParentOrders(){
+    show("parentOrders");
+    fetch("http://127.0.0.1:5000/parent/orders/"+selectedChildId)
+    .then(r=>r.json())
+    .then(data=>{
+        if(!data.length){
+            parentOrdersList.innerHTML = "<i>Пока нет заказов</i>";
+            return;
+        }
+        parentOrdersList.innerHTML = data.map(o=>`
+            <div style="border:1px solid #ccc;padding:10px;margin:5px">
+                ${o.time}: ${o.meal} — <b>${o.dish}</b><br>
+                Статус: ${o.given?"выдано":"не выдано"}
+            </div>
+        `).join("");
+    });
+}
+
+function loadParentReviews(){
+    show("parentReviews");
+    fetch("http://127.0.0.1:5000/parent/reviews/"+selectedChildId)
+    .then(r=>r.json())
+    .then(data=>{
+        if(!data.length){
+            parentReviewsList.innerHTML = "<i>Пока нет отзывов</i>";
+            return;
+        }
+        parentReviewsList.innerHTML = data.map(r=>`
+            <div style="border:1px solid #ccc;padding:10px;margin:5px">
+                <b>${r.dish}</b>: ${r.review}
+            </div>
+        `).join("");
+    });
+}
+
+
+// заполнение классов
+for(let i=1;i<=11;i++){
+    classNumber.innerHTML+=`<option>${i}</option>`;
+}
+"АБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЩЭЮЯ".split("").forEach(l=>{
+    classLetter.innerHTML+=`<option>${l}</option>`;
+});
+
+if(document.getElementById("childClassNumber") && document.getElementById("childClassLetter")){
+    const cNum = document.getElementById("childClassNumber");
+    const cLet = document.getElementById("childClassLetter");
+    for(let i=1;i<=11;i++){ cNum.innerHTML += `<option>${i}</option>`; }
+    "АБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЩЭЮЯ".split("").forEach(l=>{ cLet.innerHTML += `<option>${l}</option>`; });
+}
+
+
+function escapeHtml(str){
+    return String(str)
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+}
+
+
+let notesStudentId = null;
+
+function openNotes(){
+    // для ученика: заметки о себе
+    if(!currentUserId){ return; }
+    notesStudentId = currentUserId;
+    notesTitle.innerText = "Заметки (ученик)";
+    noteText.value = "";
+    notesError.innerText = "";
+    loadNotes();
+    show("notesScreen");
+}
+
+function openParentNotes(){
+    if(!selectedChildId){
+        // если ребёнок не выбран, попробуем выбрать первого из кеша
+        if(cachedChildren.length>0){
+            selectedChildId = cachedChildren[0].id;
+        } else {
+            alert("Сначала привяжите ребёнка и выберите его");
+            return;
+        }
+    }
+    notesStudentId = selectedChildId;
+    notesTitle.innerText = "Заметки ребёнка (ID: " + notesStudentId + ")";
+    noteText.value = "";
+    notesError.innerText = "";
+    loadNotes();
+    show("notesScreen");
+}
+
+async function loadNotes(){
+    if(!notesStudentId){ return; }
+    const res = await fetch(baseUrl + "/notes/" + notesStudentId);
+    const data = await res.json();
+    if(!Array.isArray(data)){
+        notesList.innerHTML = "";
+        notesError.innerText = data.error || "Не удалось загрузить заметки";
+        return;
+    }
+    notesError.innerText = "";
+    if(data.length===0){
+        notesList.innerHTML = "<p>Заметок пока нет.</p>";
+        return;
+    }
+    notesList.innerHTML = data.map(n => `
+        <div class="card" style="margin:8px 0;">
+            <div><b>${escapeHtml(n.created_at || "")}</b></div>
+            <div>${escapeHtml(n.text)}</div>
+            <small>Автор ID: ${n.author_id}</small><br/>
+            <button onclick="deleteNote(${n.id})">Удалить</button>
+        </div>
+    `).join("");
+}
+
+async function addNote(){
+    const text = (noteText.value || "").trim();
+    if(!text){
+        notesError.innerText = "Введите текст заметки";
+        return;
+    }
+    const payload = {
+        student_id: notesStudentId,
+        author_id: currentUserId,
+        text
+    };
+    const res = await fetch(baseUrl + "/note", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if(data.error){
+        notesError.innerText = data.error;
+        return;
+    }
+    noteText.value = "";
+    await loadNotes();
+}
+
+async function deleteNote(id){
+    await fetch(baseUrl + "/note/" + id, { method:"DELETE" });
+    await loadNotes();
+}
+
+// ===== UI: ripple + tiny button animation =====
+(function setupButtonRipple(){
+  function addRipple(e){
+    const btn = e.currentTarget;
+    const rect = btn.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    const ripple = document.createElement("span");
+    ripple.className = "ripple";
+    ripple.style.width = ripple.style.height = size + "px";
+    ripple.style.left = (e.clientX - rect.left) + "px";
+    ripple.style.top  = (e.clientY - rect.top) + "px";
+    btn.appendChild(ripple);
+    setTimeout(()=>ripple.remove(), 650);
+  }
+
+  function hook(){
+    document.querySelectorAll("button").forEach(b=>{
+      // чтобы не вешать дважды
+      if(b.dataset.rippleBound) return;
+      b.dataset.rippleBound = "1";
+      b.addEventListener("click", addRipple);
+    });
+  }
+
+  // старт и после смен экранов
+  hook();
+  const _show = window.show;
+  window.show = function(id){
+    _show(id);
+    hook();
+  };
+})();
+</script>
+</body>
+</html>
