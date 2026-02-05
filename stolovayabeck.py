@@ -13,7 +13,6 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
 
-# МОДЕЛИ
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -29,10 +28,8 @@ class User(db.Model):
     class_number = db.Column(db.Integer)
     class_letter = db.Column(db.String(2))
 
-    # Для связи "родитель -> дети" (у ученика хранится parent_id)
     parent_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)
 
-    # self-referential relationship: parent.children -> список пользователей (детей)
     children = db.relationship("User",
                                backref=db.backref("parent", remote_side=[id]),
                                lazy=True)
@@ -42,8 +39,8 @@ class User(db.Model):
 
 class Note(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    student_id = db.Column(db.Integer, nullable=False)   # чей это профиль (ученик)
-    author_id = db.Column(db.Integer, nullable=False)    # кто оставил заметку (ученик/родитель/админ)
+    student_id = db.Column(db.Integer, nullable=False)
+    author_id = db.Column(db.Integer, nullable=False)
     text = db.Column(db.String(1000), nullable=False)
     created_at = db.Column(db.String(30), nullable=False, default=lambda: datetime.datetime.now().isoformat(timespec="seconds"))
 
@@ -130,7 +127,6 @@ def delete_dish():
 def order():
     data = request.json or {}
 
-    # если заказ делает родитель, он передаёт student_id (id ребёнка)
     student_id = data.get("student_id") or data.get("user_id")
     ordered_by = data.get("user_id")
 
@@ -237,7 +233,6 @@ def cook_reviews():
 
 @app.route("/cook/notes_today", methods=["GET"])
 def cook_notes_today():
-    # Повару полезно видеть заметки учеников, которые заказали сегодня
     today = datetime.date.today().isoformat()
     student_ids = sorted({o.get("student_id") for o in orders if o.get("time") == today and o.get("student_id") is not None})
     if not student_ids:
@@ -245,7 +240,6 @@ def cook_notes_today():
 
     notes = Note.query.filter(Note.student_id.in_(student_ids)).order_by(Note.created_at.desc()).all()
 
-    # подмешаем email ученика/автора для удобства повара
     users = User.query.filter(User.id.in_(set(student_ids + [n.author_id for n in notes]))).all()
     user_by_id = {u.id: u for u in users}
 
@@ -311,27 +305,22 @@ def parent_link_child_full():
 
     child = User.query.filter_by(email=email).first()
 
-    # Если ученик уже существует — проверяем совпадение данных и привязываем
     if child:
         if child.role != "student":
             return jsonify({"error": "Пользователь с такой почтой существует, но не является учеником"}), 400
 
-        # если уже привязан к другому родителю — не даём перезатереть
         if child.parent_id and int(child.parent_id) != int(parent_id):
             return jsonify({"error": "Ученик уже привязан к другому родителю"}), 400
-        # сверка данных
+
         def norm(x):
             return (x or "").strip().lower()
 
-        # Если в профиле ученика какие-то данные не заполнены (пустые/None),
-        # считаем их "неизвестными" и ДОЗАПОЛНЯЕМ из формы родителя.
-        # Это убирает ложные несовпадения, когда ученик был создан/зарегистрирован без ФИО и т.п.
         mismatch = []
 
         def compare_or_fill(attr_name, new_value, label):
             current = getattr(child, attr_name)
             if norm(current) == "":
-                # дозаполняем
+
                 setattr(child, attr_name, new_value)
                 return
             if norm(current) != norm(new_value):
@@ -342,7 +331,6 @@ def parent_link_child_full():
         compare_or_fill("patronymic", patronymic, "отчество")
         compare_or_fill("birthdate", birthdate, "дата рождения")
 
-        # class_number: если пустой — заполним, иначе сравним как строку
         if child.class_number is None:
             try:
                 child.class_number = int(class_number)
@@ -352,7 +340,6 @@ def parent_link_child_full():
             if str(child.class_number) != str(class_number):
                 mismatch.append("класс (номер)")
 
-        # class_letter
         if norm(child.class_letter) == "":
             child.class_letter = class_letter
         else:
@@ -365,7 +352,6 @@ def parent_link_child_full():
         db.session.commit()
         return jsonify({"message": "linked", "child_id": child.id})
 
-    # Если ученика нет — создаём и привязываем
     alphabet = string.ascii_letters + string.digits
     temp_password = "".join(random.choice(alphabet) for _ in range(10))
 
@@ -411,8 +397,6 @@ def parent_student_reviews(student_id):
     arr = [r for r in reviews if r.get("student_id") == student_id]
     return jsonify(arr)
 
-
-#  КАБИНЕТ АДМИНИСТРАТОРА
 
 @app.route("/admin/users", methods=["GET"])
 def admin_get_users():
@@ -473,9 +457,6 @@ def clear_stats():
     orders.clear()
     reviews.clear()
     return jsonify({"message": "Очищено"})
-
-
-#  ЗАПУСК
 
 if __name__ == "__main__":
     with app.app_context():
