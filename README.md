@@ -80,5 +80,4 @@
 
 ### 1. Клонирование репозитория
 ```bash
-git clone <ссылка-на-репозиторий>
-cd canteen-system
+git clone githu.com/DogmanProject/StolovayaFinal canteen-system
