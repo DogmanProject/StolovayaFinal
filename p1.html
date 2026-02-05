@@ -1,4 +1,3 @@
-<!-- :contentReference[oaicite:0]{index=0} -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -20,7 +19,6 @@
   --radius:18px;
 }
 
-/* ===== Base ===== */
 *{ box-sizing:border-box; }
 html,body{ height:100%; }
 body{
@@ -29,13 +27,11 @@ body{
   color:var(--ink);
   overflow-x:hidden;
 
-  /* Новый фон: “столовая” (скатерть/плитка + тёплый свет) */
   background:
     radial-gradient(1200px 800px at 18% 8%, rgba(255,255,255,.95) 0%, rgba(255,246,230,.92) 42%, rgba(244,241,234,.92) 100%),
     radial-gradient(900px 620px at 82% 20%, rgba(255,230,200,.55) 0%, rgba(255,230,200,0) 60%),
     radial-gradient(900px 620px at 20% 90%, rgba(255,210,170,.45) 0%, rgba(255,210,170,0) 58%),
     linear-gradient(180deg, rgba(255,255,255,.35), rgba(255,255,255,0) 45%),
-    /* лёгкая “плитка” как в столовой */
     linear-gradient(90deg, rgba(25,118,210,.06) 1px, transparent 1px),
     linear-gradient(0deg, rgba(255,204,51,.06) 1px, transparent 1px);
   background-size:
@@ -55,7 +51,6 @@ body{
   background-color: #fff6e6;
 }
 
-/* ===== Background decor: реалистичные пирожки + пар ===== */
 .bg-decor{
   position:fixed;
   inset:0;
@@ -64,7 +59,6 @@ body{
   overflow:hidden;
 }
 
-/* Пирожок “косичкой” (приближённо реалистичный через градиенты/тени) */
 .pie{
   position:absolute;
   width: 220px;
@@ -78,16 +72,12 @@ body{
     inset 0 10px 14px rgba(255,255,255,.35),
     inset 0 -16px 24px rgba(130,70,18,.28);
   background:
-    /* блики */
     radial-gradient(90px 70px at 30% 28%, rgba(255,255,255,.70) 0%, rgba(255,255,255,0) 58%),
     radial-gradient(140px 110px at 65% 40%, rgba(255,245,220,.55) 0%, rgba(255,245,220,0) 62%),
-    /* “запечённость” */
     radial-gradient(240px 160px at 50% 60%, rgba(244,191,120,.95) 0%, rgba(212,138,58,.92) 55%, rgba(150,78,18,.88) 100%),
-    /* мелкая фактура теста */
     repeating-linear-gradient(25deg, rgba(255,255,255,.0) 0 7px, rgba(255,255,255,.06) 7px 9px);
 }
 
-/* Тёмный контур снизу (подпёк) */
 .pie::after{
   content:"";
   position:absolute;
@@ -100,7 +90,6 @@ body{
   opacity: .9;
 }
 
-/* “Косичка” сверху: ряд переплетённых “петель” */
 .pie::before{
   content:"";
   position:absolute;
@@ -111,14 +100,11 @@ body{
   border-radius: 999px;
   opacity: .95;
   background:
-    /* тень под косичкой */
     radial-gradient(220px 50px at 50% 85%, rgba(65,28,0,.28) 0%, rgba(65,28,0,0) 70%),
-    /* “петельки” */
     repeating-radial-gradient(circle at 10px 50%,
       rgba(255,232,195,.95) 0 9px,
       rgba(214,145,68,.92) 9px 14px,
       rgba(255,232,195,.0) 14px 24px),
-    /* общий тон */
     linear-gradient(180deg, rgba(255,236,206,.92), rgba(198,120,46,.90));
   box-shadow:
     inset 0 8px 12px rgba(255,255,255,.26),
@@ -126,7 +112,6 @@ body{
   filter: saturate(1.05) contrast(1.02);
 }
 
-/* Пар от пирожков */
 .pie .steam{
   position:absolute;
   left: 50%;
@@ -153,7 +138,6 @@ body{
   100% { opacity: 0;   transform: translateX(calc(-50% + 18px)) translateY(-140px) scale(1.55); }
 }
 
-/* ===== Header ===== */
 header{
   position:sticky;
   top:0;
@@ -185,12 +169,11 @@ header button{
 header button:hover{ background: rgba(255,255,255,.22); transform: translateY(-1px); }
 header button:active{ transform: translateY(0) scale(.98); }
 
-/* ===== Layout ===== */
 .screen{
   display:none;
   padding: 22px 14px 34px;
   position:relative;
-  z-index:1; /* над декором */
+  z-index:1;
 }
 .screen.active{ display:block; }
 
@@ -215,7 +198,6 @@ header button:active{ transform: translateY(0) scale(.98); }
   pointer-events:none;
 }
 
-/* ===== Inputs ===== */
 input, select, textarea{
   width:100%;
   padding: 10px 12px;
@@ -233,7 +215,6 @@ input:focus, select:focus, textarea:focus{
 }
 textarea{ resize: vertical; }
 
-/* ===== Buttons ===== */
 button{
   width:100%;
   padding: 12px 14px;
@@ -262,7 +243,6 @@ button:active{
   box-shadow: 0 8px 16px rgba(17,24,39,.14);
 }
 
-/* “соусные” акценты для кнопок (школьная столовая) */
 .card > button:nth-of-type(1){
   background: linear-gradient(180deg, rgba(255,204,51,.95) 0%, rgba(255,178,0,.95) 100%);
 }
@@ -279,7 +259,6 @@ button:active{
   color:#06101b;
 }
 
-/* Ripple */
 .ripple{
   position:absolute;
   border-radius:999px;
@@ -292,11 +271,9 @@ button:active{
   to{ transform: translate(-50%,-50%) scale(3.2); opacity:0; }
 }
 
-/* Messages */
 .error{ color:#b91c1c; margin-top:10px; font-weight:700; }
 .success{ color:#15803d; margin-top:10px; font-weight:700; }
 
-/* Lists / blocks */
 ul{ padding-left: 18px; }
 .row{ display:flex; gap: 10px; margin-top: 10px; }
 .row select{ width: 50%; }
@@ -307,13 +284,11 @@ hr{
   margin: 16px 0;
 }
 
-/* Small cards inside lists */
 .card .card{
   background: rgba(255,255,255,.88);
   box-shadow: 0 10px 22px rgba(17,24,39,.10);
 }
 
-/* Motion safety */
 @media (prefers-reduced-motion: reduce){
   *{ animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
 }
@@ -323,7 +298,6 @@ hr{
 <body>
 
 <div class="bg-decor" aria-hidden="true">
-  <!-- Пирожки “косичкой” + пар (пар привязан к пирожкам) -->
   <div class="pie" style="left:-40px; top:110px; transform: rotate(12deg); width:240px; height:150px;">
     <div class="steam s1"></div><div class="steam s2"></div><div class="steam s3"></div><div class="steam s4"></div>
   </div>
@@ -346,8 +320,6 @@ hr{
     <h2>Школьная столовая</h2>
 </header>
 
-<!--  СТАРТ  -->
-
 <div class="screen active" id="start">
     <div class="card">
         <h3>Войти как</h3>
@@ -360,8 +332,6 @@ hr{
     </div>
 </div>
 
-<!--  ВХОД  -->
-
 <div class="screen" id="login">
     <div class="card">
         <h3 id="loginTitle"></h3>
@@ -372,8 +342,6 @@ hr{
     </div>
 </div>
 
-<!--  ВЫБОР РОЛИ ПРИ РЕГИСТРАЦИИ  -->
-
 <div class="screen" id="registerRole">
     <div class="card">
         <h3>Зарегистрироваться как</h3>
@@ -383,8 +351,6 @@ hr{
         <button onclick="chooseRole('parent')">Родитель</button>
     </div>
 </div>
-
-<!--  РЕГИСТРАЦИЯ  -->
 
 <div class="screen" id="register">
     <div class="card">
@@ -410,8 +376,6 @@ hr{
     </div>
 </div>
 
-<!--  КАБИНЕТ УЧЕНИКА  -->
-
 <div class="screen" id="student">
     <div class="card">
         <h3>Кабинет ученика</h3>
@@ -420,8 +384,6 @@ hr{
         <button onclick="openNotes()">Заметки</button>
     </div>
 </div>
-
-<!--  КАБИНЕТ РОДИТЕЛЯ  -->
 
 <div class="screen" id="parent">
     <div class="card">
@@ -478,9 +440,6 @@ hr{
     </div>
 </div>
 
-
-<!--  ЗАМЕТКИ  -->
-
 <div class="screen" id="notesScreen">
     <div class="card">
         <h3 id="notesTitle">Заметки</h3>
@@ -491,9 +450,6 @@ hr{
         <div id="notesList"></div>
     </div>
 </div>
-
-
-<!--  МЕНЮ ПО ДНЯМ  -->
 
 <div class="screen" id="menuScreen">
     <div class="card">
@@ -509,8 +465,6 @@ hr{
         <div id="menuContent"></div>
     </div>
 </div>
-
-<!--  ОПЛАТА ПИТАНИЯ  -->
 
 <div class="screen" id="foodType">
     <div class="card">
@@ -549,8 +503,6 @@ hr{
         <button onclick="skipReview()">Пропустить</button>
     </div>
 </div>
-
-<!--  КАБИНЕТ ПОВАРА  -->
 
 <div class="screen" id="cook">
     <div class="card">
@@ -623,8 +575,6 @@ hr{
     </div>
 </div>
 
-<!--  КАБИНЕТ АДМИНИСТРАТОРА  -->
-
 <div class="screen" id="admin">
     <div class="card">
         <h3>Кабинет администратора</h3>
@@ -674,8 +624,6 @@ hr{
         <button onclick="alert('Пока недоступно')">Логи системы</button>
     </div>
 </div>
-
-<!--  СКРИПТЫ  -->
 
 <script>
 let historyStack = ["start"];
@@ -957,7 +905,6 @@ async function loadCookNotesToday(){
         return;
     }
 
-    // сгруппируем по ученику
     const byStudent = {};
     for(const n of data){
         const key = (n.student_email || ("ID:"+n.student_id));
@@ -982,7 +929,6 @@ async function loadCookNotesToday(){
     `).join("");
 }
 
-// открываем общий экран заметок (notesScreen) для выбранного ученика
 function openNotesForStudent(studentId){
     notesStudentId = studentId;
     notesTitle.innerText = "Заметки ученика (ID: " + notesStudentId + ")";
@@ -1090,8 +1036,6 @@ function clearStats(){
 }
 
 
-// ===== РОДИТЕЛЬ =====
-
 function openParentLink(){
     linkError.innerText = "";
     linkSuccess.innerText = "";
@@ -1161,7 +1105,6 @@ function linkChildFull(){
 
 
 function openParentFood(){
-    // сначала выбираем ребёнка
     show("parentSelectChild");
     buildChildrenPicker(()=>{ show("foodType"); });
 }
@@ -1196,7 +1139,6 @@ function buildChildrenPicker(onSelected){
 
 function selectChild(id, label){
     selectedChildId = id;
-    // переход в следующий экран
     if(window._onChildSelected){ window._onChildSelected(); }
 }
 
@@ -1235,8 +1177,6 @@ function loadParentReviews(){
     });
 }
 
-
-// заполнение классов
 for(let i=1;i<=11;i++){
     classNumber.innerHTML+=`<option>${i}</option>`;
 }
@@ -1265,7 +1205,6 @@ function escapeHtml(str){
 let notesStudentId = null;
 
 function openNotes(){
-    // для ученика: заметки о себе
     if(!currentUserId){ return; }
     notesStudentId = currentUserId;
     notesTitle.innerText = "Заметки (ученик)";
@@ -1277,7 +1216,6 @@ function openNotes(){
 
 function openParentNotes(){
     if(!selectedChildId){
-        // если ребёнок не выбран, попробуем выбрать первого из кеша
         if(cachedChildren.length>0){
             selectedChildId = cachedChildren[0].id;
         } else {
@@ -1346,8 +1284,6 @@ async function deleteNote(id){
     await fetch(baseUrl + "/note/" + id, { method:"DELETE" });
     await loadNotes();
 }
-
-// ===== UI: ripple + tiny button animation =====
 (function setupButtonRipple(){
   function addRipple(e){
     const btn = e.currentTarget;
@@ -1364,14 +1300,11 @@ async function deleteNote(id){
 
   function hook(){
     document.querySelectorAll("button").forEach(b=>{
-      // чтобы не вешать дважды
       if(b.dataset.rippleBound) return;
       b.dataset.rippleBound = "1";
       b.addEventListener("click", addRipple);
     });
   }
-
-  // старт и после смен экранов
   hook();
   const _show = window.show;
   window.show = function(id){
